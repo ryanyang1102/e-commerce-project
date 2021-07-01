@@ -10,7 +10,7 @@ import App from './App';
 import router from './router';     // 載入資料夾時，預設就會載入 index.js 的檔案，所以後面可以省略
 
 Vue.use(VueAxios, axios);
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
 
 /* eslint-disable no-new */
 new Vue({
@@ -18,4 +18,4 @@ new Vue({
   router,
   components: { App },
   template: '<App/>'
-})
+});
