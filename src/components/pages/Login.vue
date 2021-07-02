@@ -28,11 +28,6 @@
         },
       };
     },
-    // mounted() {
-    //   const api = process.env.APIPATH;
-    //   const url = `${api}/admin/signin`;
-    //   console.log(url);
-    // },
     methods: {
       signin() {
         const api = process.env.APIPATH;
@@ -41,6 +36,10 @@
         vm.$http.post(url, vm.user).then((response) => {
           console.log(response.data);
           if (response.data.success){
+            // const token = response.data.token;
+            // const expired = response.data.expired;
+            // console.log(token, expired);
+            // document.cookie = `hexToken=${token};expires=${new Date(expired)};`;
             vm.$router.push('/');
           };
         });

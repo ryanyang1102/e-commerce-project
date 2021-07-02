@@ -9,8 +9,8 @@ export default {
   name: 'HelloWorld',
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
-    }
+      msg: '',
+    };
   },
   methods: {
     signout() {
@@ -23,7 +23,7 @@ export default {
           vm.$router.push('/login');
         };
       });
-    }
+    },
   },
 }
 </script>
