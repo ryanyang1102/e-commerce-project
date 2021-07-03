@@ -21,17 +21,17 @@ new Vue({
 });
 
 router.beforeEach((to, from, next) => {
-  console.log('to:', to, 'from:', from, 'next:', next);
+  // console.log('to:', to, 'from:', from, 'next:', next);
   if(to.meta.requiresAuth) {
     const api = process.env.APIPATH;
     const url = `${api}/api/user/check`;    // 這邊要使用 axios 套件來請求
     axios.post(url).then((response) => {    // 請求驗證不需傳送 user 資料
-      console.log(response.data);
+      // console.log(response.data);
       if (response.data.success){
-        next();             // 成功登入則放行切換頁面
+        next();                             // 成功登入則放行切換頁面
       } else {
         next({
-          path: '/login',   // 未登入則切換到登入頁面
+          path: '/login',                   // 未登入則切換到登入頁面
         });
       };
     });
