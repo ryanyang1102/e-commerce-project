@@ -1,7 +1,9 @@
 <template>
   <div>
     <div class="text-right mt-4">
-      <button class="btn btn-primary">建立新的產品</button>
+      <button class="btn btn-primary" @click="openModal">
+        建立新的產品
+      </button>
     </div>
     <table class="table mt-4">
       <thead>
@@ -33,18 +35,40 @@
             </span>
           </td>
           <td>
-            <botton class="btn btn-outline-primary btn-sm">
+            <button class="btn btn-outline-primary btn-sm">
               編輯
-            </botton>
+            </button>
           </td>
         </tr>
       </tbody>
     </table>
+    <!-- Modal -->
+    <div class="modal fade" id="productModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            ...
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Understood</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-export default {                         // 將資料匯出到此元件使用
+import $ from 'jquery';                  // 載入 jquery 並使用 "$" 變數來運行其語法
+
+export default {                              // 將資料匯出到此元件使用
   data() {
     return {
       products: [],
@@ -63,6 +87,9 @@ export default {                         // 將資料匯出到此元件使用
         vm.products = response.data.products;   // 將遠端的產品資料放進 data 的 products 陣列
       });
     },
+    openModal() {
+      $('#productModal').modal('show');         // 選取設有 id 的元素，以 modal 方式開啟
+    }
   },
   created() {
     this.getProducts();
