@@ -6,7 +6,7 @@ import Login from '@/components/pages/Login';
 import Dashboard from '@/components/Dashboard';
 import Products from '@/components/pages/Products';
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
   routes: [
