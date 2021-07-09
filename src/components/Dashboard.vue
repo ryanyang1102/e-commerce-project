@@ -21,5 +21,14 @@ export default {                  // 匯出資料到此元件
     Navbar,
     Sidebar,
   },
+  created() {
+    const token = document.cookie.replace(
+      /(?:(?:^|.*;\s*)hexToken\s*=\s*([^;]*).*$)|^.*$/,
+      '$1'
+    );
+    if(token !=="") {
+      this.axios.defaults.headers.common.Authorization = token;
+    };
+  },
 };
 </script>

@@ -36,10 +36,12 @@
         vm.$http.post(url, vm.user).then((response) => {
           // console.log(response.data);
           if (response.data.success){
-            // const token = response.data.token;
-            // const expired = response.data.expired;
-            // console.log(token, expired);
-            // document.cookie = `hexToken=${token};expires=${new Date(expired)};`;
+            // 將伺服器傳來的 token 及 expired 給讀出來
+            const token = response.data.token;
+            const expired = response.data.expired;
+            console.log(token, expired);
+            // 寫入 cookie
+            document.cookie = `hexToken=${token};expires=${new Date(expired)};`;
             vm.$router.push('/admin/products');
           };
         });

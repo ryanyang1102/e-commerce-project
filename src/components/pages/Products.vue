@@ -81,7 +81,6 @@
                     v-model="tempProduct.title"
                     placeholder="請輸入標題">
                 </div>
-
                 <div class="form-row">
                   <div class="form-group col-md-6">
                     <label for="category">分類</label>
