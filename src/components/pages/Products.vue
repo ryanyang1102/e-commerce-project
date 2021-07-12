@@ -1,7 +1,8 @@
 <template>
-  <div>
+  <div><!-- 你 -->
     <div class="text-right mt-4">
-      <button class="btn btn-primary" @click="openModal">
+      <button class="btn btn-primary"
+        @click="openModal(true)">
         建立新的產品
       </button>
     </div>
@@ -13,7 +14,7 @@
           <th width="120">原價</th>
           <th width="120">售價</th>
           <th width="100">是否啟用</th>
-          <th width="80">編輯</th>
+          <th width="160">編輯</th>
         </tr>
       </thead>
       <tbody>
@@ -35,8 +36,13 @@
             </span>
           </td>
           <td>
-            <button class="btn btn-outline-primary btn-sm">
+            <button class="btn btn-outline-primary btn-sm"
+              @click="openModal(false, item)">
               編輯
+            </button>
+            <button class="btn btn-outline-danger btn-sm"
+              @click="deleteModal(item)">
+              刪除
             </button>
           </td>
         </tr>
@@ -69,10 +75,9 @@
                     <i class="fas fa-spinner fa-spin"></i>
                   </label>
                   <input type="file" id="customFile" class="form-control"
-                    ref="files">
+                    ref="files" @change="uploadFile">
                 </div>
-                <img img="https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=828346ed697837ce808cae68d3ddc3cf&auto=format&fit=crop&w=1350&q=80"
-                  class="img-fluid" :src="tempProduct.imageUrl" alt="">
+                <img class="img-fluid" :src="tempProduct.imageUrl" alt="上傳圖片">
               </div>
               <div class="col-sm-8">
                 <div class="form-group">
@@ -159,11 +164,12 @@
             </button>
           </div>
           <div class="modal-body">
-            是否刪除 <strong class="text-danger">{{  }}</strong> 商品(刪除後將無法恢復)。
+            是否刪除 <strong class="text-danger">{{ tempProduct.title }}</strong> 商品（ 刪除後將無法恢復 ）。
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">取消</button>
             <button type="button" class="btn btn-danger"
+              @click="deleteProduct"
               >確認刪除</button>
           </div>
         </div>
@@ -180,6 +186,7 @@ export default {                              // 將資料匯出到此元件使�
     return {
       products: [],
       tempProduct: {},                        // 存放 Modal 欄位內容資料
+      isNew: false,
     };
   },
   methods: {
@@ -195,15 +202,77 @@ export default {                              // 將資料匯出到此元件使�
         vm.products = response.data.products;   // 將遠端的產品資料放進 data 的 products 陣列
       });
     },
-    openModal() {
+    openModal(isNew, item) {
+      if (isNew) {
+        //使用判斷式，透過第一個參數是否為 true 來判定是新增產品還是編輯產品
+        this.tempProduct = {};
+        this.isNew = true;
+      } else {
+        // 使用 Object.assign 將 item 放入一個空物件，再放入 tempProduct 裡。避免傳參考。
+        this.tempProduct = Object.assign({}, item);
+        this.isNew = false;
+      }
       $('#productModal').modal('show');         // 選取設有 id 的元素，以 modal 方式開啟
     },
-    updateProduct() {
-      const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/product`;
+    deleteModal(item){
+      this.tempProduct=item;
+      $('#delProductModal').modal('show');
+    },
+    deleteProduct() {
       const vm = this;
-      vm.$http.post(api, { data: vm.tempProduct }).then((response) => {
+      const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/product/${vm.tempProduct.id}`;
+      vm.$http.delete(api).then((response) => {
         console.log(response.data);
-        // vm.products = response.data.products;   // 將遠端的產品資料放進 data 的 products 陣列
+        if (response.data.success) {
+          $('#delProductModal').modal('hide');
+          vm.getProducts();
+        } else {
+          $('#delProductModal').modal('hide');
+          vm.getProducts();
+          console.log('刪除失敗！');
+        };
+      });
+    },
+    updateProduct() {
+      let api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/product`;
+      let httpMethod = 'post';
+      const vm = this;
+      if (!vm.isNew) {
+        api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/product/${vm.tempProduct.id}`;
+        httpMethod = 'put';
+      }
+      vm.$http[httpMethod](api, { data: vm.tempProduct }).then((response) => {
+        console.log(response.data);
+        if (response.data.success) {            // 新增成功時，將 modal 視窗關閉，並再次請求遠端資料（等於重新整理）
+          $('#productModal').modal('hide');
+          vm.getProducts();
+        } else {
+          $('#productModal').modal('hide');
+          vm.getProducts();
+          console.log('新增失敗！');              // 失敗跑出錯誤訊息
+        };
+      });
+    },
+    uploadFile() {
+      console.log(this);
+      const uploadedFile = this.$refs.files.files[0]; // 上傳檔案的位置
+      const vm = this;
+      const forData = new FormData();             // 使用 FormData 來模擬表單上傳
+      forData.append('file-to-upload', uploadedFile);
+      const url = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/upload`;
+      vm.$http.post(url, forData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'   // 指定 formdata 的格式
+        }
+      }).then((response) => {
+        console.log(response.data);
+        if (response.data.success) {
+          vm.tempProduct.imageUrl = response.data.imageUrl;
+          console.log(vm.tempProduct);
+          // 使用 set 強制寫入才能雙向綁定。
+          // vm.$set(vm.tempProduct, 'imageUrl', response.data.imageUrl);
+          // console.log(vm.tempProduct);
+        };
       });
     },
   },
