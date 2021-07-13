@@ -4,14 +4,19 @@
 import Vue from 'vue';             // 當路徑沒有看到 './' 時，都是直接從 node_modules 載入
 import axios from 'axios';         // 主要 AJAX 套件
 import VueAxios from 'vue-axios';  // 將 axios 轉為 vue 的套件
+import Loading from 'vue-loading-overlay';         // 讀取中效果套件
+import 'vue-loading-overlay/dist/vue-loading.css'; // 讀取中效果套件的 css 檔
 import 'bootstrap';                // 引號裡面的 bootstrap 為路徑來源
 
 // 自行增設的檔案
 import App from './App';
 import router from './router';     // 載入資料夾時，預設就會載入 index.js 的檔案，所以後面可以省略
+import './bus';                    // 注入 bus.js檔 ( Even Bus )
 
 Vue.use(VueAxios, axios);
 Vue.config.productionTip = false;
+
+Vue.component('Loading', Loading);
 
 /* eslint-disable no-new */
 new Vue({

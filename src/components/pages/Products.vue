@@ -1,5 +1,6 @@
 <template>
-  <div><!-- 你 -->
+  <div>
+    <loading :active.sync="isLoading"/>    <!-- 讀取中的程式碼 -->
     <div class="text-right mt-4">
       <button class="btn btn-primary"
         @click="openModal(true)">
@@ -72,7 +73,7 @@
                 </div>
                 <div class="form-group">
                   <label for="customFile">或 上傳圖片
-                    <i class="fas fa-spinner fa-spin"></i>
+                    <i class="fas fa-spinner fa-spin" v-if="status.fileUploading"></i>
                   </label>
                   <input type="file" id="customFile" class="form-control"
                     ref="files" @change="uploadFile">
@@ -186,7 +187,11 @@ export default {                              // 將資料匯出到此元件使�
     return {
       products: [],
       tempProduct: {},                        // 存放 Modal 欄位內容資料
-      isNew: false,
+      isNew: false,                           // 開啟的 modal 是否是新增產品
+      isLoading: false,                       // vue-loading 是否顯示讀取中效果
+      status: {
+        fileUploading: false,                 // animating-icons 是否顯示讀取中效果
+      },
     };
   },
   methods: {
@@ -197,8 +202,10 @@ export default {                              // 將資料匯出到此元件使�
       //console.log(process.env.APIPATH,process.env.CUSTOMPATH);
       const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/products`;
       const vm = this;
+      vm.isLoading = true;
       vm.$http.get(api).then((response) => {
         // console.log(response.data);
+        vm.isLoading = false;
         vm.products = response.data.products;   // 將遠端的產品資料放進 data 的 products 陣列
       });
     },
@@ -254,24 +261,27 @@ export default {                              // 將資料匯出到此元件使�
       });
     },
     uploadFile() {
-      console.log(this);
+      // console.log(this);
       const uploadedFile = this.$refs.files.files[0]; // 上傳檔案的位置
       const vm = this;
       const forData = new FormData();             // 使用 FormData 來模擬表單上傳
       forData.append('file-to-upload', uploadedFile);
       const url = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/upload`;
+      vm.status.fileUploading = true;             // 顯示讀取中效果
       vm.$http.post(url, forData, {
         headers: {
           'Content-Type': 'multipart/form-data'   // 指定 formdata 的格式
         }
       }).then((response) => {
-        console.log(response.data);
+        // console.log(response.data);
+        vm.status.fileUploading = false;          // 關閉讀取中效果
         if (response.data.success) {
-          vm.tempProduct.imageUrl = response.data.imageUrl;
-          console.log(vm.tempProduct);
-          // 使用 set 強制寫入才能雙向綁定。
-          // vm.$set(vm.tempProduct, 'imageUrl', response.data.imageUrl);
+          // vm.tempProduct.imageUrl = response.data.imageUrl;
           // console.log(vm.tempProduct);
+          // 使用 set 強制寫入才能雙向綁定。
+          vm.$set(vm.tempProduct, 'imageUrl', response.data.imageUrl);
+        } else {
+          this.$bus.$emit('message:push', response.data.message, 'danger');
         };
       });
     },
