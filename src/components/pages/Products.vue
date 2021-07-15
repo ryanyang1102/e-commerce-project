@@ -49,6 +49,28 @@
         </tr>
       </tbody>
     </table>
+    <nav aria-label="Page navigation example">
+      <ul class="pagination">
+        <li class="page-item"
+          :class="{ 'disabled': !pagination.has_pre }">
+          <a class="page-link" href="#" aria-label="Previous"
+          @click.prevent="getProducts(pagination.current_page - 1)">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+        <li class="page-item" v-for="page in pagination.total_pages" :key="page" :class="{'active': pagination.current_page === page}">
+          <a class="page-link" href="#"
+          @click.prevent="getProducts(page)">{{ page }}</a>
+        </li>
+        <li class="page-item"
+        :class="{ 'disabled': !pagination.has_next }">
+          <a class="page-link" href="#" aria-label="Next"
+          @click.prevent="getProducts(pagination.current_page + 1)">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
     <!-- Modal -->
     <div class="modal fade" id="productModal" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -187,6 +209,7 @@ export default {                              // 將資料匯出到此元件使�
     return {
       products: [],
       tempProduct: {},                        // 存放 Modal 欄位內容資料
+      pagination: {},
       isNew: false,                           // 開啟的 modal 是否是新增產品
       isLoading: false,                       // vue-loading 是否顯示讀取中效果
       status: {
@@ -195,18 +218,19 @@ export default {                              // 將資料匯出到此元件使�
     };
   },
   methods: {
-    getProducts() {
+    getProducts(page = 1) {
       // API 伺服器路徑
       // 所申請的 APIPath
       // 帶入環境變數：伺服器來源 及 API路徑
       //console.log(process.env.APIPATH,process.env.CUSTOMPATH);
-      const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/products`;
+      const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/products?page=${page}`;
       const vm = this;
       vm.isLoading = true;
       vm.$http.get(api).then((response) => {
-        // console.log(response.data);
+        console.log(response.data);
         vm.isLoading = false;
         vm.products = response.data.products;   // 將遠端的產品資料放進 data 的 products 陣列
+        vm.pagination = response.data.pagination;
       });
     },
     openModal(isNew, item) {
@@ -229,7 +253,7 @@ export default {                              // 將資料匯出到此元件使�
       const vm = this;
       const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/product/${vm.tempProduct.id}`;
       vm.$http.delete(api).then((response) => {
-        console.log(response.data);
+        // console.log(response.data);
         if (response.data.success) {
           $('#delProductModal').modal('hide');
           vm.getProducts();
