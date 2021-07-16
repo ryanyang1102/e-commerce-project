@@ -49,29 +49,9 @@
         </tr>
       </tbody>
     </table>
-    <nav aria-label="Page navigation example">
-      <ul class="pagination">
-        <li class="page-item"
-          :class="{ 'disabled': !pagination.has_pre }">
-          <a class="page-link" href="#" aria-label="Previous"
-          @click.prevent="getProducts(pagination.current_page - 1)">
-            <span aria-hidden="true">&laquo;</span>
-          </a>
-        </li>
-        <li class="page-item" v-for="page in pagination.total_pages" :key="page" :class="{'active': pagination.current_page === page}">
-          <a class="page-link" href="#"
-          @click.prevent="getProducts(page)">{{ page }}</a>
-        </li>
-        <li class="page-item"
-        :class="{ 'disabled': !pagination.has_next }">
-          <a class="page-link" href="#" aria-label="Next"
-          @click.prevent="getProducts(pagination.current_page + 1)">
-            <span aria-hidden="true">&raquo;</span>
-          </a>
-        </li>
-      </ul>
-    </nav>
-    <!-- Modal -->
+    <!-- pagination -->
+    <Pagination :pagination='pagination' @emitProductPage="getProducts" />
+    <!-- Productmodal -->
     <div class="modal fade" id="productModal" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg" role="document">
@@ -203,8 +183,12 @@
 
 <script>
 import $ from 'jquery';                       // 載入 jquery 並使用 "$" 變數來運行其語法
+import Pagination from './Pagination';
 
 export default {                              // 將資料匯出到此元件使用
+  components: {
+    Pagination,
+  },
   data() {
     return {
       products: [],
