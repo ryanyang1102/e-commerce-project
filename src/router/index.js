@@ -5,6 +5,9 @@ import Router from 'vue-router';
 import Login from '@/components/pages/Login';
 import Dashboard from '@/components/Dashboard';
 import Products from '@/components/pages/Products';
+import Coupons from '@/components/pages/Coupons';
+import Orders from '@/components/pages/Orders';
+import CustomerOrder from '@/components/pages/CustomerOrders';
 
 Vue.use(Router);
 
@@ -35,6 +38,30 @@ export default new Router({
           name: 'Products',
           component: Products,          // 指向載入進來的產品子元件
           meta: { requiresAuth: true }, // 需登錄驗證才可切換到此頁面
+        },
+      ],
+    },
+    {
+      path: '/coupons',                   // 優惠券路徑
+      name: 'Coupons',
+      component: Coupons,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/orders',                    // 訂單列表路徑
+      name: 'Orders',
+      component: Orders,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/',
+      name: 'Dashboard',
+      component: Dashboard,
+      children: [
+        {
+          path: 'customer_order',         // 注意路徑不可大寫
+          name: 'CustomerOrder',
+          component: CustomerOrder,
         },
       ],
     },
