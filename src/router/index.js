@@ -8,6 +8,7 @@ import Products from '@/components/pages/Products';
 import Coupons from '@/components/pages/Coupons';
 import Orders from '@/components/pages/Orders';
 import CustomerOrder from '@/components/pages/CustomerOrders';
+import CartTable from '@/components/CartTable';
 
 Vue.use(Router);
 
@@ -45,6 +46,12 @@ export default new Router({
       path: '/coupons',                   // 優惠券路徑
       name: 'Coupons',
       component: Coupons,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/cartTable',                  // 購物車路徑
+      name: 'CartTable',
+      component: CartTable,
       meta: { requiresAuth: true },
     },
     {
