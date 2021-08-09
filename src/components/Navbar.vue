@@ -6,10 +6,8 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
-      <router-link aria-hidden="true" to="/cartTable" @click="cartData">
-        <button class="btn btn-success btn-block">
+      <router-link class="btn btn-success mx-2" aria-hidden="true" to="/cart_table">
           <i class="fas fa-shopping-cart"></i>
-        </button>
       </router-link>
       <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">

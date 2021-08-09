@@ -13,12 +13,14 @@ import App from './App';
 import router from './router';     // 載入資料夾時，預設就會載入 index.js 的檔案，所以後面可以省略
 import './bus';                    // 注入 bus.js檔 ( Even Bus )
 import currencyFilter from './filters/currency';
+import dateFilter from './filters/date';
 
 Vue.use(VueAxios, axios);
 Vue.config.productionTip = false;
 
 Vue.component('Loading', Loading);
 Vue.filter('currency', currencyFilter);
+Vue.filter('date', dateFilter);
 
 /* eslint-disable no-new */
 new Vue({

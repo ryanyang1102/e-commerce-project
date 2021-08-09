@@ -25,7 +25,10 @@
           <td class="text-right">
             {{ item.origin_price | currency }}
           </td>
-          <td class="text-right">
+          <td v-if="!item.price" class="text-right">
+            {{ item.origin_price | currency }}
+          </td>
+          <td v-else class="text-right">
             {{ item.price | currency }}
           </td>
           <td>
@@ -211,7 +214,7 @@ export default {                              // 將資料匯出到此元件使�
       const vm = this;
       vm.isLoading = true;
       vm.$http.get(api).then((response) => {
-        console.log(response.data);
+        // console.log(response.data);
         vm.isLoading = false;
         vm.products = response.data.products;   // 將遠端的產品資料放進 data 的 products 陣列
         vm.pagination = response.data.pagination;
@@ -230,7 +233,7 @@ export default {                              // 將資料匯出到此元件使�
       $('#productModal').modal('show');         // 選取設有 id 的元素，以 modal 方式開啟
     },
     deleteModal(item){
-      this.tempProduct=item;
+      this.tempProduct = item;
       $('#delProductModal').modal('show');
     },
     deleteProduct() {
@@ -255,9 +258,9 @@ export default {                              // 將資料匯出到此元件使�
       if (!vm.isNew) {
         api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/product/${vm.tempProduct.id}`;
         httpMethod = 'put';
-      }
+      };
       vm.$http[httpMethod](api, { data: vm.tempProduct }).then((response) => {
-        console.log(response.data);
+        // console.log(response.data);
         if (response.data.success) {            // 新增成功時，將 modal 視窗關閉，並再次請求遠端資料（等於重新整理）
           $('#productModal').modal('hide');
           vm.getProducts();

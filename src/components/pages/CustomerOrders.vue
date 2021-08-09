@@ -110,7 +110,7 @@ export default {
     return {
       products: [],
       product: {},
-      cart: {},
+      // cart: {},
       isLoading: false,
       status: {
         loadingItem: '',
@@ -126,8 +126,9 @@ export default {
       vm.$http.get(url).then(response => {
         vm.products = response.data.products;
         // console.log(response);
-        vm.isLoading = false;
         vm.pagination = response.data.pagination;
+        vm.isLoading = false;
+
       });
     },
     getProduct(id) {
@@ -152,27 +153,12 @@ export default {
       vm.$http.post(url, { data: cart }).then(response => {
         // console.log(response);
         vm.status.loadingItem = '';
-        vm.getCart();
         $('#productModal').modal('hide');
-      });
-    },
-    getCart() {
-      const vm = this;
-      const url = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/cart`;
-      vm.isLoading = true;
-      vm.$http.get(url).then(response => {
-        console.log(response);
-        vm.cart = response.data.data;
-        vm.$bus.$emit('cartData', vm.cart)
-        vm.isLoading = false;
       });
     },
   },
   created() {
-    const vm = this;
     this.getProducts();
-    this.getCart();
-    // vm.$bus.$emit('carData', vm.cart)
   },
 }
 </script>
